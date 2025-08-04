@@ -1,6 +1,6 @@
 {
   "name": "mlue",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Reactive Programming With Style",
   "main": "Revision.js",
@@ -8,7 +8,8 @@
     "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;"
   },
   "keywords": [
-    "rev", "fp"
+    "rev",
+    "fp"
   ],
   "author": "@catpea",
   "license": "GPL",
