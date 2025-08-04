@@ -1,0 +1,23 @@
+{
+  "name": "mlue",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Reactive Programming With Style",
+  "main": "Revision.js",
+  "scripts": {
+    "save": "git add .; git commit -m 'Updated Release'; npm version patch; npm publish; git push --follow-tags;"
+  },
+  "keywords": [
+    "rev", "fp"
+  ],
+  "author": "@catpea",
+  "license": "GPL",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/catpea/mlue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/catpea/mlue/issues"
+  },
+  "homepage": "https://github.com/catpea/mlue#readme"
+}
