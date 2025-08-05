@@ -1,4 +1,3 @@
-import { zip, get } from "/modules/utils/utils.js";
 
 function generateId() {
   const randomChars = (length = 8) => Array.from({ length }, () => String.fromCharCode(97 + Math.floor(Math.random() * 26))).join("");
@@ -89,5 +88,64 @@ export function combineLatest(...parents) {
   };
   const subscriptions = parents.map((signal) => signal.subscribe(updateCombinedValue));
   child.collect(subscriptions);
+  return child;
+}
+
+
+
+
+
+
+
+
+
+
+export function fromBus(bus, eventName) {
+  const child = new Signal();
+  const handler = (data) => (child.value = data);
+  const unsubscribeFromBus = bus.on(eventName, handler);
+  child.collect(unsubscribeFromBus);
+  return child;
+}
+
+export function fromEvent(el, eventType, options = {}) {
+  const child = new Signal();
+  const handler = (event) => (child.value = event);
+  el.addEventListener(eventType, handler, options);
+  child.collect(() => el.removeEventListener(eventType, handler, options));
+  return child;
+}
+
+// SUBSCRIPTIONS = NOTE: to* functions return subscriptions not signals
+
+export function toInnerTextOf(signal, el) {
+  const subscription = signal.subscribe((v) => (el.innerText = v));
+  return subscription;
+}
+
+export function toSignal(source, destination) {
+  const subscription = source.subscribe((v) => (destination.value = v));
+  return subscription;
+}
+export function toEvent(source, bus, eventName) {
+  const subscription = source.subscribe(v=> bus.emit(eventName, v) );
+  return subscription;
+}
+
+export function fromBetweenEvents(startElement, startEvent, endElement, endEvent) {
+  const child = new Signal();
+  let hasActivated = false;
+  const handleDown = () => { hasActivated = true; child.value = true; };
+  const handleUp = () => { if(hasActivated){ child.value = false; hasActivated = false; }
+  };
+  // Add event listeners
+  startElement.addEventListener(startEvent, handleDown);
+  endElement.addEventListener(endEvent, handleUp);
+  // Cleanup function to remove event listeners
+  const cleanup = () => {
+    startElement.removeEventListener(startEvent, handleDown);
+    endElement.removeEventListener(endEvent, handleUp);
+  };
+  child.collect(cleanup);
   return child;
 }
