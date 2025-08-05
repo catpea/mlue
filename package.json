@@ -1,6 +1,6 @@
 {
   "name": "mlue",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "description": "Reactive Programming With Style",
   "main": "Revision.js",
