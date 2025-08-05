@@ -3,18 +3,23 @@
 
 ```JavaScript
 
-// The Basic Idea:
+import { Revision, Watcher, } from 'mlue';
+import { combineLatest } from 'mlue/signals.js';
 
-globalThis.rev = new Revision(7);
+export default class Rectangle {
 
-class Rectangle {
   constructor(width, height) {
-
-    this.rev new Revision();
+    this.rev = new Revision();
     this.width = width;
     this.height = height;
 
-    return Revision.watcher(this, ['width', 'height']);
+    // Each time 'width', 'height', or 'resizeBy' is invoked execute the function (third argument)
+    return Watcher.watch(this, ['width', 'height', 'resizeBy'], member=> this.rev.inc() );
+  }
+
+  resizeBy(scaleFactor){
+    this.width = this.width * scaleFactor;
+    this.height = this.height * scaleFactor;
   }
 
   // Instance method
@@ -29,17 +34,18 @@ class Rectangle {
 
 }
 
+// Setup
 let rect1 = new Rectangle(5, 8);
 let rect2 = new Rectangle(6, 7);
 
-console.log(Rectangle.compareArea(rect1, rect2)); // -2
+// Prints Once
+console.log('PLAIN', Rectangle.compareArea(rect1, rect2)); // -2
 
+// Revision is a separate Signal based system
+const unsubscribeFn = combineLatest(rect1.rev, rect2.rev) // watching revisions for change
+.subscribe(()=>console.log('REACTIVE:', Rectangle.compareArea(rect1, rect2))) // subscribing, and on initialize and change printing
 
-Revision.watch(globalThis.rev, rect1.rev, rect2.rev)
-.subscribe(()=>console.log(Rectangle.compareArea(rect1, rect2)))
-
-
-rect1.height = 77;
-rect1.rev.inc();
+rect1.height = 77; // triggers, because of Watcher
+rect1.rev.inc(); // triggers because of Revision
 
 ```

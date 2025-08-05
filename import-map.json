@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "#Rectangle": "./Rectangle.js",
+    "#Revision": "./Revision.js",
+    "#Watcher": "./Watcher.js"
+  }
+}

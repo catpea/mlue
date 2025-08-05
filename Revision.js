@@ -5,19 +5,19 @@ export function generateId() {
   return `${randomChars()}-${randomChars(4)}-${randomChars(4)}-${randomChars(4)}-${randomChars(12)}`;
 }
 
-export class Revision {
+export default class Revision {
   #queue = new Set(); // Queue to hold scheduled functions
   #isFlushing = false; // Flag to indicate if flushing is in progress
 
-  #uuid; // Unique identifier for the revision
+  #uuid = generateId(); // Unique identifier for the revision
   #rev = 0; // Revision number
   hint; // Hint for the current state
 
   #subscribers; // Set of subscribers for notifications
 
-  constructor() {
+  constructor(rev=0) {
     this.#subscribers = new Set();
-    this.#inc(); // Initialize with the first revision
+    this.#rev = rev;
   }
 
   [Symbol.toPrimitive](hint) {
@@ -36,16 +36,17 @@ export class Revision {
     // If not currently flushing, initiate the flush process
     if (!this.#isFlushing) {
       this.#isFlushing = true; // Set flushing flag
-      queueMicrotask(this.#flush.bind(this)); // Schedule flush
+      queueMicrotask(this.flush.bind(this)); // Schedule flush
     }
   }
 
-  #flush() {
+  flush() {
     for (const fn of this.#queue) {
       fn.bind(this)(); // Execute each function in the queue
     }
     this.#queue.clear(); // Clear the queue after execution
     this.#isFlushing = false; // Reset flushing flag
+    // console.log('QUEUESTATE:', ...this.#queue); // Log current queue for debugging
   }
 
   get value() {
@@ -57,12 +58,13 @@ export class Revision {
     this.#uuid = generateId(); // Generate a new unique ID
     this.hint = this.value; // Update hint with current value
     this.notify(); // Notify all subscribers of the change
-    console.log('RAN!', this.hint)
+    // console.log('RAN!', this.hint)
   }
 
   inc() {
     this.#schedule(this.#inc); // Schedule increment operation
-    console.log(...this.#queue); // Log current queue for debugging
+    // console.log('QUEUESTATE:', ...this.#queue); // Log current queue for debugging
+    return [this.#rev, this.#uuid];
   }
 
   subscribe(subscriber) {
