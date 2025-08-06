@@ -7,13 +7,13 @@ import { Revision, Watcher } from './index.js';
 describe('Rectangle Revision and Watcher and Tests', () => {
 
   test('increment revision once starting at 5', () => {
-    const rev = new Revision(5);
+    const rev = new Revision(null, 5);
     rev.inc();
 
     // We Manually Flush
     rev.flush();
     const [revision, uuid] = rev.value;
-    assert.strictEqual( revision, 6, 'Strarted at 5 incremented once, flushed should be 6');
+    assert.strictEqual( revision, 6, 'Started at 5 incremented once, flushed should be 6');
   });
   test('increment revision many times, but it should run only once as it is batched', () => {
     const rect1 = new Rectangle(1, 1);

@@ -80,6 +80,9 @@
       const unsubscribeFn = combineLatest(rect1.rev, rect2.rev) // watching revisions for change
         .subscribe(() => console.log("REACTIVE:", Rectangle.compareArea(rect1, rect2))); // subscribing, and on initialize and change printing
 
+
+
+
       setInterval(()=>{
         rect1.height = 100*Math.random(); // triggers, because of Watcher
         rect1.width =  100*Math.random(); // triggers, because of Watcher

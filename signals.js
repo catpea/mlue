@@ -4,7 +4,7 @@ function generateId() {
   return `${randomChars()}-${randomChars(4)}-${randomChars(4)}-${randomChars(4)}-${randomChars(12)}`;
 }
 
-export class Pulse {
+export class Pulse { // pulse is a Signal withut .map, .filter, etc funcions, it is a "pure" signal.
   #id;
   #value;
   #subscribers;
@@ -64,6 +64,8 @@ export class Signal extends Pulse {
   map(fn) { return map(this, fn) }
   combineLatest(...signals) { return combineLatest(this, ...signals) }
 }
+
+
 
 export function filter(parent, test) {
   const child = new Signal();

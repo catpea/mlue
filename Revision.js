@@ -8,16 +8,17 @@ export function generateId() {
 export default class Revision {
   #queue = new Set(); // Queue to hold scheduled functions
   #isFlushing = false; // Flag to indicate if flushing is in progress
-
+  #reference;
   #uuid = generateId(); // Unique identifier for the revision
   #rev = 0; // Revision number
   hint; // Hint for the current state
 
   #subscribers; // Set of subscribers for notifications
 
-  constructor(rev=0) {
+  constructor(reference, rev=0) {
     this.#subscribers = new Set();
     this.#rev = rev;
+    this.#reference = reference;
   }
 
   [Symbol.toPrimitive](hint) {
@@ -68,14 +69,14 @@ export default class Revision {
   }
 
   subscribe(subscriber) {
-    subscriber([this.#rev, this.#uuid]); // Notify new subscriber immediately
+    subscriber([this.#rev, this.#uuid], this.#reference); // Notify new subscriber immediately
     this.#subscribers.add(subscriber); // Add subscriber to the set
     return () => this.#subscribers.delete(subscriber); // Return unsubscribe function
   }
 
   notify() {
     for (const subscriber of this.#subscribers) {
-      subscriber([this.#rev, this.#uuid]); // Notify each subscriber of the current state
+      subscriber([this.#rev, this.#uuid], this.#reference); // Notify each subscriber of the current state
     }
   }
 
