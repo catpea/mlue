@@ -77,6 +77,13 @@ export default class Watcher {
 
     return new Proxy(context, {
       get(target, prop, receiver) {
+
+        // Ensure iteration works by returning the original iterator function
+        if (prop === Symbol.iterator) {
+          // Bind to the target so 'this' inside iterator is the original array
+          return target[Symbol.iterator].bind(target);
+        }
+
         const value = Reflect.get(target, prop, receiver);
         const config = getWatcherConfig(prop);
 
